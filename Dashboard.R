@@ -37,9 +37,10 @@ server <- function(input,output) {
         data$timestamp <- time
         data <- data[c(as.Date(Sys.time()) == as.Date(time)),]
       }
-      else{
-        data <- data.frame(av_get(symbol=ticker,av_fun="TIME_SERIES_DAILY"),outputsize="full")
-        data <- data[c(data$close!=0),]
+      else if(input$freq == "daily"){
+        data <- data.frame(av_get(symbol=ticker,av_fun="TIME_SERIES_DAILY",outputsize="full"))
+        data <- data[c(data$volume!=0),]
+        data <- data[c(data$timestamp >= input$range[1] & data$timestamp <= input$range[2]),]
       }
       
       ggplot(data=data, aes(x=timestamp,y=close)) + geom_line() + theme_bw()
