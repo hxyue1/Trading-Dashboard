@@ -4,8 +4,7 @@ library(ggplot2)
 
 ui <-fluidPage(
   textInput("ticker","Asset Ticker"),
-  checkboxInput("smooth", "Smooth"),
-  selectInput("freq",h3("Frequency"),
+  selectInput("freq","Frequency",
               choices = list("Intraday"= "intraday", "Daily"="daily")),
   
   conditionalPanel(
@@ -47,11 +46,5 @@ server <- function(input,output) {
     })
   })
   
-  
-  # output$mytable = DT::renderDataTable({
-  #   ticker <- input$ticker
-  #   av_api_key("RUDBPNS133OPNKY1")
-  #   data <- data.frame(av_get(symbol=ticker,av_fun="TIME_SERIES_DAILY"))
-  # })
 }
 shinyApp(ui,server)

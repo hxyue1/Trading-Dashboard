@@ -1,0 +1,35 @@
+{% block content %}
+    <h1>Asset Ticker</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.ticker.label }}<br>
+            {{ form.ticker(size=32) }}
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
+
+<table>
+    <thead>
+    <tr>
+        <th>Timestamp</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+	<th>Close</th>
+	<th>Volume</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for row in value %} 
+            <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

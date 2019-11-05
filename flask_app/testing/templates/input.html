@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='input.css') }}">
+</head>
+<body>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<div class="main">
+  <div class="wrap">
+    <div class="sidebar">
+      <!--{% block content %}-->
+        <h1>Welcome to Asset Explorer!</h1>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.ticker.label }}
+        <br>
+            {{ form.ticker(size=32) }}
+      	</p>
+
+        <p>
+            {{ form.frequency.label }}
+        <br>
+            {{ form.frequency}}
+      	</p>
+
+        <p>
+            {{ form.interval.label }}
+        <br>
+            {{ form.interval}}
+      	</p>
+
+        <p>{{ form.submit() }}</p>
+        </form>
+      <!--{% endblock %}-->
+    </div>
+    <div class="content">
+      <!--{% block graphs %}-->
+      	<body>
+      		<div><img src='{{ graph1 }}'></img></div>
+      	</body>
+      <!--{% endblock %}-->
+    </div>
+  </div>
+</div>
+{% for table in tables %}
+
+            {{ table|safe }}
+{% endfor %}
+</body>
+</html>
