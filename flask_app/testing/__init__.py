@@ -4,18 +4,13 @@ import os
 from flask_table import Table, Col
 import sqlite3
 import pandas as pd
-from . import alphavantage as av
+from . import analytics as an
 import random
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 
-import io
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-import base64
 from . import db
 
 
@@ -55,23 +50,7 @@ def create_app(test_config=None):
                                                      ])
         submit = SubmitField('Get data')
         
-    def build_graph(df, frequency):   
-        
-        if frequency == 'intraday':
-            x_coordinates = df['Timestamp'].dt.time
-        else:
-            x_coordinates = df['Timestamp']
-            
-        y_coordinates = df['Close']
-        
-        img = io.BytesIO()
-        plt.plot(x_coordinates, y_coordinates)
-        plt.savefig(img, format='png')
-        img.seek(0)
-        graph_url = base64.b64encode(img.getvalue()).decode()
-        plt.close()
-        
-        return 'data:image/png;base64,{}'.format(graph_url)
+    
     
     @app.route('/input', methods=['GET','POST'])
     def example_1():
@@ -83,17 +62,19 @@ def create_app(test_config=None):
         if form.validate_on_submit():
             
             ticker = form.ticker.data
-            df = av.get_data(ticker, 
+            df = an.get_data(ticker, 
                              frequency=form.frequency.data,
                              interval=form.interval.data)
             
-            graph1_url = build_graph(df, frequency)
+            graph1_url = an.build_line(df, frequency)
+            graph2_url = an.build_hist(df)
             
             return render_template('input.html',
-                                   tables=[df.to_html(classes='data', index=False)],
-                                   titles=df.columns.values,
+                                   #tables=[df.to_html(classes='data', index=False)],
+                                   #titles=df.columns.values,
                                    form=form,
-                                   graph1=graph1_url
+                                   graph1=graph1_url,
+                                   graph2=graph2_url
                                    )
         else:
             df = pd.DataFrame({
@@ -115,16 +96,6 @@ def create_app(test_config=None):
 
     return(app)
 
-
-
-
-
-
-
-
-
-
- 
 
 def index():
     return render_template('index.html')

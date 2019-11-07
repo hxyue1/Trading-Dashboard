@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='input.css') }}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='input.css') }}">
+    <title>Asset Explorer</title>
 </head>
 <body>
 
@@ -16,11 +16,11 @@
     </ul>
   {% endif %}
 {% endwith %}
+<h1>Welcome to Asset Explorer!</h1>
 <div class="main">
   <div class="wrap">
     <div class="sidebar">
       <!--{% block content %}-->
-        <h1>Welcome to Asset Explorer!</h1>
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
 
@@ -51,13 +51,18 @@
       	<body>
       		<div><img src='{{ graph1 }}'></img></div>
       	</body>
+        <body>
+          <div><img src='{{ graph2 }}'></img></div>
+        </body>
       <!--{% endblock %}-->
+    </div>
+    <div class="content">
     </div>
   </div>
 </div>
-{% for table in tables %}
+<!--{% for table in tables %}
 
             {{ table|safe }}
-{% endfor %}
+{% endfor %}-->
 </body>
 </html>
