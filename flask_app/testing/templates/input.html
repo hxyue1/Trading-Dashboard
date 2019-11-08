@@ -27,7 +27,7 @@
 <h1>Welcome to Asset Explorer!</h1>
 <div class="main">
   <div class="wrap">
-    <div class="sidebar">
+    <div class="sidebar" style="width:25%">
       <!--{% block content %}-->
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
@@ -58,7 +58,7 @@
         </form>
       <!--{% endblock %}-->
     </div>
-    <div class="content">
+    <div class="content" style="margin-left:25%">
       <!--{% block graphs %}-->
       	<body>
       		<div><img src='{{ graph1 }}'></img></div>

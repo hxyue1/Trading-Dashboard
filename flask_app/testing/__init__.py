@@ -8,7 +8,7 @@ from . import analytics as an
 import random
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField, validators
 from wtforms.validators import DataRequired
 
 from . import db
@@ -38,12 +38,11 @@ def create_app(test_config=None):
     db.init_app(app)
     
     class InputForm(FlaskForm):
-        ticker = StringField('Ticker', validators=[DataRequired()])
-        #frequency = StringField('Frequency', validators=[DataRequired()])   
+        ticker = StringField('Ticker', validators=[DataRequired()])   
         frequency = SelectField(u'Frequency', choices=[('daily','Daily'),
                                                        ('intraday','Intraday')])
-        start = DateField('DatePicker')
-        end = DateField('DatePicker')
+        start = DateField('DatePicker',format='%m/%d/%Y', validators=(validators.Optional(),))
+        end = DateField('DatePicker',format='%m/%d/%Y', validators=(validators.Optional(),))
         interval = SelectField(u'Interval', choices=[('1min','1 minute'),
                                                      ('5min','5 minute'),
                                                      ('15min','15 minute'),
@@ -56,14 +55,14 @@ def create_app(test_config=None):
     
     @app.route('/input', methods=['GET','POST'])
     def example_1():
-        
+
         form=InputForm()
         ticker = form.ticker.data
         frequency = form.frequency.data
-        flash(form.start.data)
-        
+        flash('asdasd')
         if form.validate_on_submit():
-            flash('asasd')
+            flash('validated')
+
             ticker = form.ticker.data
             df = an.get_data(ticker, 
                              frequency=form.frequency.data,
