@@ -8,7 +8,7 @@ from . import analytics as an
 import random
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField
 from wtforms.validators import DataRequired
 
 from . import db
@@ -42,6 +42,8 @@ def create_app(test_config=None):
         #frequency = StringField('Frequency', validators=[DataRequired()])   
         frequency = SelectField(u'Frequency', choices=[('daily','Daily'),
                                                        ('intraday','Intraday')])
+        start = DateField('DatePicker')
+        end = DateField('DatePicker')
         interval = SelectField(u'Interval', choices=[('1min','1 minute'),
                                                      ('5min','5 minute'),
                                                      ('15min','15 minute'),
@@ -58,13 +60,17 @@ def create_app(test_config=None):
         form=InputForm()
         ticker = form.ticker.data
         frequency = form.frequency.data
+        flash(form.start.data)
         
         if form.validate_on_submit():
-            
+            flash('asasd')
             ticker = form.ticker.data
             df = an.get_data(ticker, 
                              frequency=form.frequency.data,
-                             interval=form.interval.data)
+                             interval=form.interval.data,
+                             start=form.start.data,
+                             end=form.end.data
+                             )
             
             graph1_url = an.build_line(df, frequency)
             graph2_url = an.build_hist(df)
