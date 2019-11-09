@@ -8,7 +8,7 @@ from . import analytics as an
 import random
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField, validators
+from wtforms import StringField, BooleanField, SubmitField, SelectField, DateField, validators, IntegerField
 from wtforms.validators import DataRequired
 
 from . import db
@@ -39,8 +39,8 @@ def create_app(test_config=None):
     
     class InputForm(FlaskForm):
         ticker = StringField('Ticker', validators=[DataRequired()])   
-        frequency = SelectField(u'Frequency', choices=[('daily','Daily'),
-                                                       ('intraday','Intraday')])
+        frequency = SelectField(u'Frequency', choices=[('intraday','Intraday'),
+                                                       ('daily','Daily')])
         start = DateField('DatePicker',format='%m/%d/%Y', validators=(validators.Optional(),))
         end = DateField('DatePicker',format='%m/%d/%Y', validators=(validators.Optional(),))
         interval = SelectField(u'Interval', choices=[('1min','1 minute'),
@@ -51,17 +51,20 @@ def create_app(test_config=None):
                                                      ])
         submit = SubmitField('Get data')
         
+    class ForecastForm(FlaskForm):
+        ticker = StringField('Ticker', validators=[DataRequired()])   
+        horizon = IntegerField('Number of days to forecast', validators=(validators.Optional(),))
+        submit = SubmitField('Forecast')
+        
     
     
-    @app.route('/input', methods=['GET','POST'])
-    def example_1():
+    @app.route('/', methods=['GET','POST'])
+    def describe():
 
         form=InputForm()
         ticker = form.ticker.data
         frequency = form.frequency.data
-        flash('asdasd')
         if form.validate_on_submit():
-            flash('validated')
 
             ticker = form.ticker.data
             df = an.get_data(ticker, 
@@ -74,7 +77,7 @@ def create_app(test_config=None):
             graph1_url = an.build_line(df, frequency)
             graph2_url = an.build_hist(df)
             
-            return render_template('input.html',
+            return render_template('index.html',
                                    #tables=[df.to_html(classes='data', index=False)],
                                    #titles=df.columns.values,
                                    form=form,
@@ -85,19 +88,15 @@ def create_app(test_config=None):
             df = pd.DataFrame({
                     'Timestamp':[1,2],
                     'Open':[1,2]})
-            return render_template('input.html',
+            return render_template('index.html',
                                    tables=[df.to_html(classes='data',index=False)],
                                    titles=df.columns.values, form=form)
-        @app.route('/')
-        def example_2():
-            form=InputForm()
-            con = sqlite3.connect('testdb.db')
-            cursor = con.cursor()
-            cursor.execute('SELECT * FROM BHP')
-            data = cursor.fetchall()
-            return render_template('example_2.html', value=data, form=form)
-        
-
+    
+    @app.route('/forecast', methods=['GET','POST'])    
+    def forecast():
+        flash('forecasting')
+        form=ForecastForm()
+        return render_template('forecast.html', form=form)
 
     return(app)
 
