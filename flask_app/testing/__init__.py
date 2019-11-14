@@ -66,7 +66,6 @@ def create_app(test_config=None):
         frequency = form.frequency.data
         if form.validate_on_submit():
 
-            ticker = form.ticker.data
             df = an.get_data(ticker, 
                              frequency=form.frequency.data,
                              interval=form.interval.data,
@@ -74,7 +73,14 @@ def create_app(test_config=None):
                              end=form.end.data
                              )
             
-            graph1_url = an.build_line(df, frequency)
+            if frequency == 'intraday':
+                x_coordinates = df['Timestamp'].dt.time
+                y_coordinates = df['Close']
+            else:
+                x_coordinates = df['Timestamp']
+                y_coordinates = df['Adjusted Close']
+                
+            graph1_url = an.build_line(x_coordinates, y_coordinates)
             graph2_url = an.build_hist(df)
             
             return render_template('index.html',
@@ -94,9 +100,21 @@ def create_app(test_config=None):
     
     @app.route('/forecast', methods=['GET','POST'])    
     def forecast():
-        flash('forecasting')
         form=ForecastForm()
-        return render_template('forecast.html', form=form)
+        ticker = form.ticker.data
+        horizon = form.horizon.data
+        
+        if form.validate_on_submit():
+            
+            df = an.get_data(ticker)
+            predictions = an.predict(df, horizon=horizon)
+            graph1_url = an.build_line(predictions['Timestamp'],predictions['Returns'])
+            graph2_url = an.build_line(predictions['Timestamp'],predictions['Standard Deviations'])
+            
+        return render_template('forecast.html',
+                               form=form,
+                               graph1=graph1_url,
+                               graph2=graph2_url)
 
     return(app)
 
