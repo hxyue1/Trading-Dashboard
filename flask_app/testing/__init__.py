@@ -109,12 +109,15 @@ def create_app(test_config=None):
             df = an.get_data(ticker)
             predictions = an.predict(df, horizon=horizon)
             graph1_url = an.build_line(predictions['Timestamp'],predictions['Returns'])
-            graph2_url = an.build_line(predictions['Timestamp'],predictions['Standard Deviations'])
+            graph2_url = an.build_line(predictions['Timestamp'],predictions['Standard Deviation'])
             
-        return render_template('forecast.html',
-                               form=form,
-                               graph1=graph1_url,
-                               graph2=graph2_url)
+            return render_template('forecast.html',
+                                   form=form,
+                                   graph1=graph1_url,
+                                   graph2=graph2_url)
+        else:
+            return render_template('forecast.html',
+                       form=form)
 
     return(app)
 
